@@ -1,0 +1,7 @@
+FROM NAMESPACE/base-builder:1
+
+
+#include "../includes/jdk.docker"
+#include "../includes/git.docker"
+#include "../includes/glibc.docker"
+#include "../includes/sbt.docker"

@@ -1,0 +1,4 @@
+FROM NAMESPACE/base:3.7.0
+
+#include "../includes/node.docker"
+#include "../includes/gulp.docker"

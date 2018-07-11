@@ -1,0 +1,5 @@
+FROM scratch
+
+ADD rootfs/rootfs.tar.gz /
+COPY scripts/apk-install /
+RUN /apk-install bash tzdata curl

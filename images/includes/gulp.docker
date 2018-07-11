@@ -1,0 +1,8 @@
+RUN npm install i -g gulp
+RUN npm install i -g mocha
+RUN mkdir -p /data
+VOLUME /data
+WORKDIR /data
+COPY resources/gulpw /usr/bin/gulpw
+RUN chmod 777 /usr/bin/gulpw
+ENTRYPOINT ["/usr/bin/gulpw"]

@@ -1,0 +1,11 @@
+RUN /apk-install rsyslog
+
+
+COPY resources/run-rsyslog /etc/services.d/rsyslog/run
+COPY resources/rsyslogd.conf /etc/rsyslogd.conf
+
+RUN /apk-install logrotate
+RUN echo "*/5 *	* * *	/usr/sbin/logrotate /etc/logrotate.conf" >> /etc/crontabs/root
+COPY resources/logrotate.conf /etc/logrotate.conf
+
+COPY resources/run-crond /etc/services.d/crond/run

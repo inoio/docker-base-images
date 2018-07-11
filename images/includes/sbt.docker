@@ -1,0 +1,16 @@
+ARG RESOURCES
+
+
+
+## Install sbt
+COPY $RESOURCES/sbt/sbt-extras /usr/bin/sbt
+RUN chmod 755 /usr/bin/sbt
+
+## the project dir with the sbt project
+VOLUME /src
+VOLUME /ivy2
+WORKDIR /src
+
+COPY $RESOURCES/sbt/sbtw /usr/bin/sbtw
+RUN chmod 755 /usr/bin/sbtw
+ENTRYPOINT ["/usr/bin/sbtw", "-sbt-dir", "/src/.sbt/sbtdir", "-sbt-boot", "/src/.sbt/boot", "-ivy", "/ivy2"]

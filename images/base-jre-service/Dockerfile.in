@@ -1,0 +1,3 @@
+FROM NAMESPACE/base-jre:1
+
+#include "../includes/s6.docker"

@@ -1,0 +1,12 @@
+RUN /apk-install python
+RUN /apk-install ca-certificates
+RUN /apk-install openssl
+
+RUN update-ca-certificates
+
+WORKDIR /
+RUN wget -q -O gcloud.tgz "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-151.0.1-linux-x86_64.tar.gz"
+RUN (echo "26b84898bc7834664f02b713fd73c7787e62827d2d486f58314cdf1f6f6c56bb  gcloud.tgz" | sha256sum -c -) && tar xzf gcloud.tgz && rm gcloud.tgz
+
+ENV PATH $PATH:/google-cloud-sdk/bin
+RUN gcloud components update --quiet

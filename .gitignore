@@ -1,2 +1,6 @@
-*.class
-*.log
+images/**/Dockerfile
+rootfs.tar.gz
+.idea
+*~
+.envrcrc
+.envrc

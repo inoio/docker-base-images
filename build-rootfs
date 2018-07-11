@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+set -x
+
+build() {
+	declare build_files="${*:-rootfs/options}"
+
+	[[ "$BUILDER_IMAGE" ]] || {
+		BUILDER_IMAGE="alpine-builder"
+		docker build -t "$BUILDER_IMAGE" builder
+	}
+
+	for file in $build_files; do
+		( # shellcheck source=versions/gliderlabs-3.2/options
+		source "$file"
+		local version_dir
+		version_dir="$(dirname "$file")"
+		: "${TAGS:?}" "${BUILD_OPTIONS:?}" "${RELEASE:?}"
+		docker run -e "TRACE=$TRACE" --rm "$BUILDER_IMAGE" "${BUILD_OPTIONS[@]}" \
+			> "$version_dir/rootfs.tar.gz"
+        )
+	done
+}
+
+run_tests() {
+	declare build_files="${*:-rootfs/options}"
+	declare -a test_files
+	for file in $build_files; do
+		# shellcheck source=versions/gliderlabs-3.2/options
+		source "$file"
+		local tag
+		tag="${TAGS[0]}" tag="${tag//:/-}" tag="${tag//\//_}"
+		test_files+=("test/test_${tag}.bats")
+	done
+	bats "${test_files[@]}"
+}
+
+main() {
+	set -eo pipefail; [[ "$TRACE" ]] && set -x
+	declare cmd="$1"
+	case "$cmd" in
+		test)	shift;	run_tests "$@";;
+		*)		build "$@";;
+	esac
+}
+
+main "$@"

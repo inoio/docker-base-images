@@ -1,0 +1,2 @@
+NAME = base
+TESTS = base

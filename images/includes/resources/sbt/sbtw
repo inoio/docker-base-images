@@ -1,0 +1,29 @@
+#!/bin/bash
+set -e
+
+DOCKER_SOCKET=/var/run/docker.sock
+DOCKER_GROUP=dind
+USERNAME=${USER:-sbt}
+
+if [ -a /etc/debian_version ]
+then
+    adduser --gecos "" --disabled-password --home /src --uid ${USERID:-1000} $USERNAME
+else
+    adduser -D -h /src -u ${USERID:-1000} $USERNAME
+fi
+if [ -S ${DOCKER_SOCKET} ]; then
+    DOCKER_GID=$(stat -c '%g' ${DOCKER_SOCKET})
+    # it happened before that the GID was taken, we need to discern that
+    if grep -q :$DOCKER_GID: /etc/group; then
+        DOCKER_GROUP=$(grep :$DOCKER_GID: /etc/group|cut -d':' -f1)
+    else
+      if [ -a /etc/debian_version ]
+      then
+        addgroup --gid ${DOCKER_GID} ${DOCKER_GROUP}
+      else
+        addgroup -g ${DOCKER_GID} ${DOCKER_GROUP}
+      fi
+    fi
+    addgroup $USERNAME ${DOCKER_GROUP}
+fi
+su $USERNAME -c 'sbt $0 $@' -- "$@"

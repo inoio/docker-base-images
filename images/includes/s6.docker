@@ -1,0 +1,3 @@
+ARG RESOURCES
+ADD $RESOURCES/s6/s6-overlay.tgz /
+ENTRYPOINT ["/init"]

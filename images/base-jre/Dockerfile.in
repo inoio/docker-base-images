@@ -1,0 +1,3 @@
+FROM NAMESPACE/base:1
+
+#include "../includes/jre.docker"

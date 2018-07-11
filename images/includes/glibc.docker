@@ -1,0 +1,4 @@
+RUN apk add --update openssl
+RUN apk --no-cache add ca-certificates
+RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub "https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub"
+RUN apk --no-cache -X "https://apkproxy.herokuapp.com/sgerrand/alpine-pkg-glibc" add glibc glibc-bin

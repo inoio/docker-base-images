@@ -1,0 +1,58 @@
+ENV SET_CONTAINER_TIMEZONE="False"
+ENV CONTAINER_TIMEZONE="Europe/Berlin"
+ENV ELASTALERT_URL="https://github.com/Yelp/elastalert/archive/master.zip"
+ENV CONFIG_DIR="/opt/config"
+ENV RULES_DIRECTORY="/opt/rules"
+ENV ELASTALERT_CONFIG="${CONFIG_DIR}/elastalert_config.yaml"
+ENV LOG_DIR="/opt/logs"
+ENV ELASTALERT_HOME="/opt/elastalert"
+ENV ELASTALERT_SUPERVISOR_CONF="${CONFIG_DIR}/elastalert_supervisord.conf"
+ENV ELASTICSEARCH_HOST="elasticsearchhost"
+ENV ELASTICSEARCH_PORT="443"
+ENV ELASTICSEARCH_TLS="True"
+ENV ELASTICSEARCH_TLS_VERIFY="True"
+ENV ELASTALERT_INDEX="elastalert_status"
+ENV AWS_REGION=eu-central-1
+
+
+RUN /apk-install ca-certificates openssl-dev openssl libffi-dev python2 python2-dev py2-pip py2-yaml gcc musl-dev tzdata openntpd wget groff less supervisor
+
+RUN mkdir -p /opt
+RUN wget -O elastalert.zip $ELASTALERT_URL
+RUN unzip elastalert.zip
+RUN rm elastalert.zip
+RUN mv /elastalert-master $ELASTALERT_HOME
+WORKDIR $ELASTALERT_HOME
+
+RUN ls -alh
+RUN python setup.py install && \\
+    pip install -e . && \\
+    pip uninstall twilio --yes && \\
+    pip install twilio==6.0.0
+
+RUN pip install awscli
+RUN /apk-install nodejs
+RUN npm install aws-es-curl -g
+
+
+COPY resources/run-elastalert /etc/services.d/elastalert/run
+
+COPY resources/datadog-elastalerter /opt
+
+
+
+RUN chmod +x /etc/services.d/elastalert/run
+
+RUN mkdir -p "$CONFIG_DIR" && \\
+    mkdir -p "$RULES_DIRECTORY" && \\
+    mkdir -p "$LOG_DIR" && \\
+    mkdir -p /var/empty && \\
+    apk del python2-dev && \\
+    apk del musl-dev && \\
+    apk del gcc && \\
+    apk del openssl-dev && \\
+    apk del libffi-dev
+
+RUN rm -rf "/var/cache/apk/*"
+
+CMD ["/etc/services.d/elastalert/run"]
