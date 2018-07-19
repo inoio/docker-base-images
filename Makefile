@@ -1,4 +1,4 @@
-IMAGES=base base-jre base-service base-jre-service base-builder base-sbt-builder 
+IMAGES=base base-jre base-service base-jre-service base-builder base-sbt-builder base-node-service
 PUBLISH_TARGETS=$(IMAGES:%=publish-%)
 PUBLISH_AMAZON_TARGETS=$(IMAGES:%=publish-amazon-%)
 CLEAN_TARGETS=$(IMAGES:%=clean-%)
@@ -36,3 +36,4 @@ base: rootfs/rootfs.tar.gz
 base-jre base-service base-builder: base
 base-jre-service: base-jre
 base-sbt-builder: base-builder
+base-node-service: base

@@ -1,0 +1,5 @@
+FROM NAMESPACE/base:1
+
+#include "../includes/s6.docker"
+#include "../includes/node.docker"
+
